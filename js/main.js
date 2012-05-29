@@ -8,7 +8,8 @@ $(document).ready(function(){
     }
 
 
-    var scaleDistances = 15;
+    var scaleDistances = 20;
+        scaleSizes = 0.2;
     var paused = false;
     var previousTime = new Date().getTime();
     var simulationTime = 0;
@@ -34,17 +35,17 @@ $(document).ready(function(){
     */
     planetParams[0] = {
         name: "Mercury",
-        radius: 1,
-        a: 1.00000312, 
-        e: 0.0167072, 
-        i: -0.0000206140838, 
-        L: 0.0000000, 
-        w: 102.9667920, 
-        T: 2454836.125
+        radius: 2.4,
+        a: 0.38709930, 
+        e: 0.2056376, 
+        i: 0.122250601, 
+        L: 48.3194793, 
+        w: 29.1527676, 
+        T: 2454755.654
     }
     planetParams[1] = {
         name: "Venus",
-        radius: 1,
+        radius: 6,
         a: 0.72333601, 
         e: 0.0067730, 
         i: 0.0592470341, 
@@ -54,17 +55,17 @@ $(document).ready(function(){
     }
     planetParams[2] = {
         name: "Earth",
-        radius: 1,
-        a: 0.72333601, 
-        e: 0.0067730, 
-        i: 0.0592470341, 
-        L: 76.6548368, 
-        w: 54.9478720, 
-        T: 2454657.866
+        radius: 6.3,
+        a: 1.00000312, 
+        e: 0.0167072, 
+        i: -0.0000206140838, 
+        L: 0.0000000, 
+        w: 102.9667920, 
+        T: 2454836.12
     }
     planetParams[3] = {
         name: "Mars",
-        radius: 1,
+        radius: 3.3,
         a: 1.52371200, 
         e: 0.0934012, 
         i: 0.0322704258, 
@@ -74,7 +75,7 @@ $(document).ready(function(){
     }
     planetParams[4] = {
         name: "Jupiter",
-        radius: 1,
+        radius: 10,
         a: 5.20287655, 
         e: 0.0483743, 
         i: 0.0227631339, 
@@ -84,7 +85,7 @@ $(document).ready(function(){
     }
     planetParams[5] = {
         name: "Saturn",
-        radius: 1,
+        radius: 9,
         a: 9.53656333, 
         e: 0.0538159, 
         i: 0.0433917859, 
@@ -94,7 +95,7 @@ $(document).ready(function(){
     }
     planetParams[6] = {
         name: "Uranus",
-        radius: 1,
+        radius: 7,
         a: 19.1889880, 
         e: 0.0472535, 
         i: 0.0134812565, 
@@ -104,7 +105,7 @@ $(document).ready(function(){
     }
     planetParams[7] = {
         name: "Neptune",
-        radius: 1,
+        radius: 7,
         a: 30.0699464, 
         e: 0.0085951, 
         i: 0.030893642, 
@@ -114,7 +115,7 @@ $(document).ready(function(){
     }
     planetParams[8] = {
         name: "Pluto",
-        radius: 1,
+        radius: 1.2,
         a: 39.4820883, 
         e: 0.2488320, 
         i: 0.29914972, 
@@ -136,6 +137,13 @@ $(document).ready(function(){
         addLight(0, 0, 0);
         //addLight(-170, 330, 160);
 
+        var light = new THREE.PointLight( 0x00ffff, 20, 1000 );
+        light.position.set( 0, 0, 0 );
+        scene.add( light );
+
+        light = new THREE.AmbientLight( 0xff0000 );
+        scene.add( light );
+
         renderer = new THREE.WebGLRenderer({
             antialias: true
         });
@@ -146,7 +154,7 @@ $(document).ready(function(){
 
         DOM.game.append(renderer.domElement);
 
-        $('canvas').css({background : '#ccc'});
+        $('canvas').css({background : '#111'});
 
         populatePlanets();
         populateSun();
@@ -156,14 +164,14 @@ $(document).ready(function(){
     function populatePlanets(){
         
         for(var i = 0; i < planetParams.length; i++){
-            planets.push(new Planet(planetParams[i].radius));
+            planets.push(new Planet(planetParams[i].radius * scaleSizes));
         }
 
     }
 
     function populateSun(){
         var radius = 2;
-        addSphere(radius, new THREE.Vector3(0, 0, 0), 0, true, null, false);
+        addSphere(radius, new THREE.Vector3(0, 0, 0), 0x00ffff, true, null, false);
     }
 
 
@@ -199,7 +207,7 @@ $(document).ready(function(){
     var Planet = function(radius){
         this.radius = radius;
 
-        this.mesh = addSphere(this.radius, new THREE.Vector3(0, 0, 0), 500, true, null, false);
+        this.mesh = addSphere(this.radius, new THREE.Vector3(0, 0, 0), 0xffffff, true, null, false);
 
 
 
@@ -346,8 +354,8 @@ $(document).ready(function(){
         if(tilt < 0 ) {tilt = 0};
         if(tilt > Math.PI / 2) {tilt = Math.PI / 2};
 
-        camera.position.y = Math.sin(tilt) * cameraDistance;
-        camera.position.z = Math.cos(tilt) * cameraDistance;
+        camera.position.y = Math.sin(tilt) * cameraDistance * -1;
+        camera.position.z = Math.cos(tilt) * cameraDistance * -1;
         camera.lookAt(sunPos);
     };
 
