@@ -9,21 +9,25 @@ $(document).ready(function(){
 
 
     var scaleDistances = 20;
-        scaleSizes = 0.2;
+    var scaleSizes = 0.2;
     var paused = false;
     var previousTime = new Date().getTime();
     var simulationTime = 0;
     var simulationSpeed = 0.05;
 
-    var fov = 60,
-        tilt = Math.PI/3,
-        cameraDistance = 120;
-        sunPos = new THREE.Vector3(0, 0, 0),
-        axes = ['x', 'y', 'z'];
+    var fov = 60;
+    var cameraTilt = Math.PI/3;
+    var cameraDistance = 120;
+    var cameraTiltAccel = 0.01;
+    var cameraSpeed = 0;
+    var cameraFriction = 0.15;
+    var sunPos = new THREE.Vector3(0, 0, 0);
 
     var planets = [];
 
     var planetParams = new Array();
+
+    var stats;
 
     /*
     a = semimajor axis, AU
@@ -141,7 +145,7 @@ $(document).ready(function(){
         // new THREE.PerspectiveCamera( FOV, viewAspectRatio, zNear, zFar );
         camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000);
         scene.add(camera);
-        tiltCamera(0);
+        updateCamera();
 
 
         var light = new THREE.PointLight( 0x00ffff, 20, 1000 );
@@ -166,6 +170,12 @@ $(document).ready(function(){
         populatePlanets();
         populateSun();
 
+        stats = new Stats();
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.top = '0px';
+        stats.domElement.style.zIndex = 100;
+        DOM.wrap.append( stats.domElement );
+
     }
 
     function populatePlanets(){
@@ -183,9 +193,13 @@ $(document).ready(function(){
 
 
     function updateAll(){
+        //update planets
         for(var i = 0; i < planets.length; i++){
             planets[i].updatePlanet();
         }
+
+        //update camera
+        updateCamera();
     }
 
     function run(time){
@@ -203,7 +217,7 @@ $(document).ready(function(){
 
         render();
         updateAll();
-
+        stats.update();
     }
 
     function render(){
@@ -334,25 +348,28 @@ $(document).ready(function(){
     };
 
 
-    function tiltCamera(x){
-        tilt += x * 0.05;
 
-        if(tilt < 0 ) {tilt = 0};
-        if(tilt > Math.PI / 2) {tilt = Math.PI / 2};
 
-        camera.position.y = Math.sin(tilt) * cameraDistance * -1;
-        camera.position.z = Math.cos(tilt) * cameraDistance * -1;
+    function updateCamera(x){
+        cameraTilt += cameraSpeed;
+        cameraSpeed *= (1-cameraFriction);
+
+        if(cameraTilt < 0 ) {cameraTilt = 0; cameraSpeed = 0;};
+        if(cameraTilt > Math.PI / 2) {cameraTilt = Math.PI / 2; cameraSpeed = 0;};
+
+        camera.position.y = Math.sin(cameraTilt) * cameraDistance * -1;
+        camera.position.z = Math.cos(cameraTilt) * cameraDistance * -1;
         camera.lookAt(sunPos);
     };
 
 
     var bindInputs = function(){
         key('up', function(){
-            tiltCamera(-1);
+            cameraSpeed -= cameraTiltAccel;
         });
 
         key('down', function(){
-            tiltCamera(1);
+            cameraSpeed += cameraTiltAccel;
         });
 
         key('p', function(){
