@@ -84,7 +84,7 @@ $(document).ready(function(){
     planetParams[4] = {
         name: "Jupiter",
         radius: 10,
-        colour: 0xFFA500,
+        colour: 0xFFB500,
         a: 5.20287655, 
         e: 0.0483743, 
         i: 0.0227631339, 
@@ -95,7 +95,7 @@ $(document).ready(function(){
     planetParams[5] = {
         name: "Saturn",
         radius: 9,
-        colour: 0xFFA500,
+        colour: 0xFFC533,
         a: 9.53656333, 
         e: 0.0538159, 
         i: 0.0433917859, 
@@ -106,7 +106,7 @@ $(document).ready(function(){
     planetParams[6] = {
         name: "Uranus",
         radius: 7,
-        colour: 0xFFA500,
+        colour: 0x5588BB,
         a: 19.1889880, 
         e: 0.0472535, 
         i: 0.0134812565, 
@@ -117,7 +117,7 @@ $(document).ready(function(){
     planetParams[7] = {
         name: "Neptune",
         radius: 7,
-        colour: 0xFFA500,
+        colour: 0x6699CC,
         a: 30.0699464, 
         e: 0.0085951, 
         i: 0.030893642, 
@@ -128,7 +128,7 @@ $(document).ready(function(){
     planetParams[8] = {
         name: "Pluto",
         radius: 1.2,
-        colour: 0xFFA500,
+        colour: 0x114477,
         a: 39.4820883, 
         e: 0.2488320, 
         i: 0.29914972, 
@@ -145,15 +145,7 @@ $(document).ready(function(){
         // new THREE.PerspectiveCamera( FOV, viewAspectRatio, zNear, zFar );
         camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000);
         scene.add(camera);
-        updateCamera();
 
-
-        var light = new THREE.PointLight( 0x00ffff, 20, 1000 );
-        light.position.set( 0, 0, 0 );
-        scene.add( light );
-
-        light = new THREE.AmbientLight( 0xff0000 );
-        scene.add( light );
 
         renderer = new THREE.WebGLRenderer({
             antialias: true
@@ -162,6 +154,7 @@ $(document).ready(function(){
         var border = 20;
         renderer.setSize(window.innerWidth - border, window.innerHeight - border);
         renderer.shadowMapEnabled = true;
+        renderer.shadowMapSoft = true;
 
         DOM.wrap.append(renderer.domElement);
 
@@ -169,6 +162,8 @@ $(document).ready(function(){
 
         populatePlanets();
         populateSun();
+        updateCamera();
+
 
         stats = new Stats();
         stats.domElement.style.position = 'absolute';
@@ -188,7 +183,17 @@ $(document).ready(function(){
 
     function populateSun(){
         var radius = 2;
-        addSphere(radius, 0xffff00);
+        geometry = new THREE.SphereGeometry(radius, 100, 100);
+        material = new THREE.MeshBasicMaterial({color: 0xFFFF00});
+
+        mesh = new THREE.Mesh(geometry, material);
+        
+        scene.add(mesh);
+
+        var sunLight = new THREE.PointLight();
+        scene.add(sunLight);
+        var light = new THREE.AmbientLight( 0x101010 );
+        scene.add(light);
     }
 
 
@@ -319,9 +324,10 @@ $(document).ready(function(){
 
 
     function addSphere(radius, colour){
-        geometry = new THREE.SphereGeometry(radius, 100, 100);
-        material = new THREE.MeshBasicMaterial({color: colour});
-        
+        geometry = new THREE.SphereGeometry(radius, 50, 50);
+        //material = new THREE.MeshBasicMaterial({color: colour});
+        material = new THREE.MeshLambertMaterial( { color: colour, shininess: 40 }  ) 
+
         mesh = new THREE.Mesh(geometry, material);
         
         scene.add(mesh);
