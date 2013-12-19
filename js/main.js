@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    var ids = ['game', 'overlay', 'message', 'splash', 'timer'];
+    var ids = ['wrap'];
     DOM = {};
     for (var i = 0; i < ids.length; i++) {
         id = ids[i];
@@ -36,6 +36,7 @@ $(document).ready(function(){
     planetParams[0] = {
         name: "Mercury",
         radius: 2.4,
+        colour: 0xFFA500,
         a: 0.38709930, 
         e: 0.2056376, 
         i: 0.122250601, 
@@ -46,6 +47,7 @@ $(document).ready(function(){
     planetParams[1] = {
         name: "Venus",
         radius: 6,
+        colour: 0xFCD59C,
         a: 0.72333601, 
         e: 0.0067730, 
         i: 0.0592470341, 
@@ -56,6 +58,7 @@ $(document).ready(function(){
     planetParams[2] = {
         name: "Earth",
         radius: 6.3,
+        colour: 0x336699,
         a: 1.00000312, 
         e: 0.0167072, 
         i: -0.0000206140838, 
@@ -66,6 +69,7 @@ $(document).ready(function(){
     planetParams[3] = {
         name: "Mars",
         radius: 3.3,
+        colour: 0xFFA500,
         a: 1.52371200, 
         e: 0.0934012, 
         i: 0.0322704258, 
@@ -76,6 +80,7 @@ $(document).ready(function(){
     planetParams[4] = {
         name: "Jupiter",
         radius: 10,
+        colour: 0xFFA500,
         a: 5.20287655, 
         e: 0.0483743, 
         i: 0.0227631339, 
@@ -86,6 +91,7 @@ $(document).ready(function(){
     planetParams[5] = {
         name: "Saturn",
         radius: 9,
+        colour: 0xFFA500,
         a: 9.53656333, 
         e: 0.0538159, 
         i: 0.0433917859, 
@@ -96,6 +102,7 @@ $(document).ready(function(){
     planetParams[6] = {
         name: "Uranus",
         radius: 7,
+        colour: 0xFFA500,
         a: 19.1889880, 
         e: 0.0472535, 
         i: 0.0134812565, 
@@ -106,6 +113,7 @@ $(document).ready(function(){
     planetParams[7] = {
         name: "Neptune",
         radius: 7,
+        colour: 0xFFA500,
         a: 30.0699464, 
         e: 0.0085951, 
         i: 0.030893642, 
@@ -116,6 +124,7 @@ $(document).ready(function(){
     planetParams[8] = {
         name: "Pluto",
         radius: 1.2,
+        colour: 0xFFA500,
         a: 39.4820883, 
         e: 0.2488320, 
         i: 0.29914972, 
@@ -129,13 +138,11 @@ $(document).ready(function(){
 
         scene = new THREE.Scene();
 
+        // new THREE.PerspectiveCamera( FOV, viewAspectRatio, zNear, zFar );
         camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000);
         scene.add(camera);
         tiltCamera(0);
 
-        //addLight(170, 330, -160);
-        addLight(0, 0, 0);
-        //addLight(-170, 330, 160);
 
         var light = new THREE.PointLight( 0x00ffff, 20, 1000 );
         light.position.set( 0, 0, 0 );
@@ -152,7 +159,7 @@ $(document).ready(function(){
         renderer.setSize(window.innerWidth - border, window.innerHeight - border);
         renderer.shadowMapEnabled = true;
 
-        DOM.game.append(renderer.domElement);
+        DOM.wrap.append(renderer.domElement);
 
         $('canvas').css({background : '#111'});
 
@@ -164,20 +171,20 @@ $(document).ready(function(){
     function populatePlanets(){
         
         for(var i = 0; i < planetParams.length; i++){
-            planets.push(new Planet(planetParams[i].radius * scaleSizes));
+            planets.push(new Planet(planetParams[i]));
         }
 
     }
 
     function populateSun(){
         var radius = 2;
-        addSphere(radius, new THREE.Vector3(0, 0, 0), 0x00ffff, true, null, false);
+        addSphere(radius, 0xffff00);
     }
 
 
     function updateAll(){
         for(var i = 0; i < planets.length; i++){
-            planets[i].updatePlanet(planetParams[i]);
+            planets[i].updatePlanet();
         }
     }
 
@@ -204,14 +211,15 @@ $(document).ready(function(){
     };
 
 
-    var Planet = function(radius){
-        this.radius = radius;
+    var Planet = function(parameterObj){
 
-        this.mesh = addSphere(this.radius, new THREE.Vector3(0, 0, 0), 0xffffff, true, null, false);
+        this.parameters = parameterObj;
+
+        this.mesh = addSphere(this.parameters.radius * scaleSizes, this.parameters.colour);
 
 
 
-        this.updatePlanet = function(parameterObj){
+        this.updatePlanet = function(){
             /*
             a = semimajor axis, AU
             e = eccentricity
@@ -220,12 +228,12 @@ $(document).ready(function(){
             w = argument of perihelion, degrees
             T = time of perihelion passage, Julian date
             */
-            var a = parameterObj.a;
-            var e = parameterObj.e;
-            var i = parameterObj.i;
-            var L = parameterObj.L;
-            var w = parameterObj.w;
-            var T = parameterObj.T;
+            var a = this.parameters.a;
+            var e = this.parameters.e;
+            var i = this.parameters.i;
+            var L = this.parameters.L;
+            var w = this.parameters.w;
+            var T = this.parameters.T;
 
             //Find the period, P, of the orbit in days.
             var P = 365.256898326 * Math.pow(a, 1.5);
@@ -296,33 +304,11 @@ $(document).ready(function(){
     };
 
 
-    function addSphere(radius, position, colour, shadows, texture, transparent){
+    function addSphere(radius, colour){
         geometry = new THREE.SphereGeometry(radius, 100, 100);
+        material = new THREE.MeshBasicMaterial({color: colour});
         
-        var args = {
-            shading: THREE.SmoothShading
-        };
-
-        if (colour) {
-            args.color = colour;
-        }
-
-        if (texture) {
-            args.map = texture;
-        }
-
-        if (transparent){
-            args.transparent = transparent;
-        }
-
-        material = new THREE.MeshLambertMaterial(args);
         mesh = new THREE.Mesh(geometry, material);
-
-        mesh.castShadow = shadows;
-        mesh.receiveShadow = true;
-        //mesh.overdraw = true;
-
-        mesh.position.addSelf(position);
         
         scene.add(mesh);
 
