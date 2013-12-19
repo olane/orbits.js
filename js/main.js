@@ -14,13 +14,9 @@ $(document).ready(function(){
     var previousTime = new Date().getTime();
     var simulationTime = 0;
     var simulationSpeed = 0.05;
+    var lastParticleSpawn = new Date().getTime();
 
-    var fov = 60;
-    var cameraTilt = Math.PI/3;
-    var cameraDistance = 120;
-    var cameraTiltAccel = 0.01;
-    var cameraSpeed = 0;
-    var cameraFriction = 0.15;
+    
     var sunPos = new THREE.Vector3(0, 0, 0);
 
     var planets = [];
@@ -138,12 +134,13 @@ $(document).ready(function(){
     }
 
 
+
     function init(){
 
         scene = new THREE.Scene();
 
         // new THREE.PerspectiveCamera( FOV, viewAspectRatio, zNear, zFar );
-        camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 10000);
         scene.add(camera);
 
 
@@ -158,7 +155,7 @@ $(document).ready(function(){
 
         DOM.wrap.append(renderer.domElement);
 
-        $('canvas').css({background : '#111'});
+        $('canvas').css({background : '#000'});
 
         populatePlanets();
         populateSun();
@@ -171,7 +168,46 @@ $(document).ready(function(){
         stats.domElement.style.zIndex = 100;
         DOM.wrap.append( stats.domElement );
 
+
+        populateParticles();
+        
     }
+
+
+    var particleSystem;
+    var particlePeriod = 100; //milliseconds
+    var particleCount = 5000;
+    var nextVictimParticle = 0; //index of the next particle to be repositioned
+
+    function populateParticles(){
+
+        // create the particle variables
+        var pGeometry = new THREE.Geometry();
+        var pMaterial = new THREE.ParticleSystemMaterial({
+            color: 0xFFFFFF,
+            size: 0.1
+        });
+
+
+        // now create the individual particles
+        for (var p = 0; p < particleCount; p++) {
+
+            // create a new particle inside the sun (not visible yet)
+            var particle = sunPos;
+
+            // add it to the geometry
+            pGeometry.vertices.push(particle);
+        }
+
+        pGeometry.dynamic = true;
+
+        // create the particle system
+        particleSystem = new THREE.ParticleSystem(pGeometry, pMaterial);
+
+        // add it to the scene
+        scene.add(particleSystem);
+    }
+
 
     function populatePlanets(){
         
@@ -197,15 +233,54 @@ $(document).ready(function(){
     }
 
 
-    function updateAll(){
-        //update planets
+    function updatePlanets(){
         for(var i = 0; i < planets.length; i++){
             planets[i].updatePlanet();
         }
-
-        //update camera
-        updateCamera();
     }
+
+    function updateParticles(){
+        for(var i = 0; i < planets.length; i++){
+            //reposition a particle
+            particleSystem.geometry.vertices[nextVictimParticle] = planets[i].mesh.position.clone();
+            nextVictimParticle = (nextVictimParticle + 1) % (particleCount);
+        }
+        particleSystem.geometry.dynamic = true;
+        particleSystem.geometry.verticesNeedUpdate = true;
+    }
+
+
+    var fov = 60;
+    var cameraTilt = Math.PI/3;
+    var cameraDistance = 120;
+
+    var cameraTiltAccel = 0.01;
+    var cameraTiltSpeed = 0;
+    var cameraTiltFriction = 0.15;
+
+    var cameraDistAccel = 0.15;
+    var cameraDistSpeed = 0;
+    var cameraDistFriction = 0.05;
+    var cameraMinDist = 5;
+
+    function updateCamera(x){
+        // TILT
+        cameraTilt += cameraTiltSpeed;
+        cameraTiltSpeed *= (1-cameraTiltFriction);
+
+        if(cameraTilt < 0 ) {cameraTilt = 0; cameraTiltSpeed = 0;};
+        if(cameraTilt > Math.PI / 2) {cameraTilt = Math.PI / 2; cameraTiltSpeed = 0;};
+
+        //DISTANCE
+        cameraDistance += cameraDistSpeed;
+        cameraDistSpeed *= (1-cameraDistFriction);
+
+        if(cameraDistance < cameraMinDist ) {cameraMinDist = 0; cameraDistSpeed = 0;};
+
+        camera.position.y = Math.sin(cameraTilt) * cameraDistance * -1;
+        camera.position.z = Math.cos(cameraTilt) * cameraDistance * -1;
+        camera.lookAt(sunPos);
+    };
 
     function run(time){
 
@@ -216,12 +291,24 @@ $(document).ready(function(){
 
         requestAnimationFrame(run);
 
+        render();
+
         if (!paused) { 
+            particleSystem.geometry.verticesNeedUpdate = true;
+
             simulationTime += elapsedTime * simulationSpeed;
+
+            if(currentTime - lastParticleSpawn > particlePeriod){
+                lastParticleSpawn = currentTime;
+                updateParticles();
+            }
+            updatePlanets();
         }
 
-        render();
-        updateAll();
+
+        updateCamera();
+
+
         stats.update();
     }
 
@@ -356,26 +443,21 @@ $(document).ready(function(){
 
 
 
-    function updateCamera(x){
-        cameraTilt += cameraSpeed;
-        cameraSpeed *= (1-cameraFriction);
-
-        if(cameraTilt < 0 ) {cameraTilt = 0; cameraSpeed = 0;};
-        if(cameraTilt > Math.PI / 2) {cameraTilt = Math.PI / 2; cameraSpeed = 0;};
-
-        camera.position.y = Math.sin(cameraTilt) * cameraDistance * -1;
-        camera.position.z = Math.cos(cameraTilt) * cameraDistance * -1;
-        camera.lookAt(sunPos);
-    };
-
-
     var bindInputs = function(){
         key('up', function(){
-            cameraSpeed -= cameraTiltAccel;
+            cameraTiltSpeed -= cameraTiltAccel;
         });
 
         key('down', function(){
-            cameraSpeed += cameraTiltAccel;
+            cameraTiltSpeed += cameraTiltAccel;
+        });
+
+        key('a', function(){
+            cameraDistSpeed -= cameraDistAccel;
+        });
+
+        key('z', function(){
+            cameraDistSpeed += cameraDistAccel;
         });
 
         key('p', function(){
