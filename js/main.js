@@ -268,10 +268,13 @@ $(document).ready(function(){
         cameraTilt += cameraTiltSpeed;
         cameraTiltSpeed *= (1-cameraTiltFriction);
 
-        if(cameraTilt < 0 ) {cameraTilt = 0; cameraTiltSpeed = 0;};
-        if(cameraTilt > Math.PI / 2 - 0.01) {
+        if(cameraTilt < 0 ) {
+            cameraTilt = 0; 
+            cameraTiltSpeed = 0;
+        }
+        else if(cameraTilt > Math.PI / 2 - 0.01) {
             cameraTilt = Math.PI / 2 - 0.01; 
-            if(cameraTiltSpeed > 0) {cameraTiltSpeed = 0;}
+            cameraTiltSpeed = 0;
         }
 
         //DISTANCE
