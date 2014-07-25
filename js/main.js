@@ -25,6 +25,10 @@ $(document).ready(function(){
 
     var stats;
 
+    var renderer, raycaster, projector;
+
+    var mouse = new THREE.Vector2(), INTERSECTED;
+
     /*
     a = semimajor axis, AU
     e = eccentricity
@@ -138,6 +142,8 @@ $(document).ready(function(){
     function init(){
 
         scene = new THREE.Scene();
+        projector = new THREE.Projector();
+        raycaster = new THREE.Raycaster();
 
         // new THREE.PerspectiveCamera( FOV, viewAspectRatio, zNear, zFar );
         camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -148,10 +154,10 @@ $(document).ready(function(){
             antialias: true
         });
 
-        var border = 5;
-        renderer.setSize(window.innerWidth - border, window.innerHeight - border);
         renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = true;
+
+        onWindowResize();
 
         DOM.wrap.append(renderer.domElement);
 
@@ -168,11 +174,32 @@ $(document).ready(function(){
         stats.domElement.style.zIndex = 100;
         DOM.wrap.append( stats.domElement );
 
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        window.addEventListener( 'resize', onWindowResize, false );
 
         populateParticles();
         
     }
 
+    function onDocumentMouseMove( event ) {
+
+        event.preventDefault();
+
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    }
+
+    function onWindowResize() {
+
+        var border = 5;
+
+        camera.aspect = (window.innerWidth - border) / (window.innerHeight - border);
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth - border, window.innerHeight - border);
+
+    }
 
     var particleSystem;
     var particlePeriod = 100; //milliseconds
@@ -281,7 +308,7 @@ $(document).ready(function(){
         cameraDistance += cameraDistSpeed;
         cameraDistSpeed *= (1-cameraDistFriction);
 
-        if(cameraDistance < cameraMinDist ) {cameraMinDist = 0; cameraDistSpeed = 0;};
+        if(cameraDistance < cameraMinDist ) {cameraDistance = cameraMinDist; cameraDistSpeed = 0;};
 
         camera.position.y = Math.sin(cameraTilt) * cameraDistance * -1;
         camera.position.z = Math.cos(cameraTilt) * cameraDistance * -1;
@@ -319,6 +346,35 @@ $(document).ready(function(){
     }
 
     function render(){
+/*
+        var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+        projector.unprojectVector( vector, camera );
+
+        raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+
+        var intersects = raycaster.intersectObjects( scene.children );
+
+        if ( intersects.length > 0 ) {
+
+            if ( INTERSECTED != intersects[ 0 ].object ) {
+
+                if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+                INTERSECTED = intersects[ 0 ].object;
+                INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                INTERSECTED.material.emissive.setHex( 0xff0000 );
+
+            }
+
+        } else {
+
+            if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+            INTERSECTED = null;
+
+        }*/
+
+
         renderer.render(scene, camera);
     };
 
