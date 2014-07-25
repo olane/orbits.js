@@ -269,7 +269,7 @@ $(document).ready(function(){
         cameraTiltSpeed *= (1-cameraTiltFriction);
 
         if(cameraTilt < 0 ) {cameraTilt = 0; cameraTiltSpeed = 0;};
-        if(cameraTilt > Math.PI / 2) {cameraTilt = Math.PI / 2; cameraTiltSpeed = 0;};
+        if(cameraTilt >= Math.PI / 2 - 0.1) {cameraTilt = Math.PI / 2 - 0.01; cameraTiltSpeed = 0;};
 
         //DISTANCE
         cameraDistance += cameraDistSpeed;
