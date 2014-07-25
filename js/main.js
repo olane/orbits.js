@@ -148,7 +148,7 @@ $(document).ready(function(){
             antialias: true
         });
 
-        var border = 20;
+        var border = 5;
         renderer.setSize(window.innerWidth - border, window.innerHeight - border);
         renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = true;
