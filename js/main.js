@@ -101,8 +101,7 @@ $(document).ready(function(){
         // create the particle variables
         var pGeometry = new THREE.Geometry();
         var pMaterial = new THREE.ParticleSystemMaterial({
-            color: 0xFFFFFF,
-            opacity: 0.5,
+            color: 0xBBBBBB,
             size: 0.1
         });
 
