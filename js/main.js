@@ -334,11 +334,15 @@ $(document).ready(function(){
 
             if(projection != null)
             {
-                document.getElementById(planets[i].parameters.name).style.top = 
-                            projection.y + "px";
+                var element = document.getElementById(planets[i].parameters.name);
 
-                document.getElementById(planets[i].parameters.name).style.left = 
-                            projection.x + "px";
+                element.style.visible = "visible";
+                element.style.top = projection.y + "px";
+                element.style.left = projection.x + "px";
+            }
+            else
+            {
+                element.style.visible = "hidden";
             }
         }
     };
