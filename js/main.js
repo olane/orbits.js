@@ -327,12 +327,19 @@ $(document).ready(function(){
         camera.up.set( 0, 0, 1 );
         camera.lookAt(sunPos);
 
-        for(var i = 0; i < planets.length; i++){
-            document.getElementById(planets[i].parameters.name).style.top = 
-                        toXYCoords(planets[i].mesh.position).y + "px";
 
-            document.getElementById(planets[i].parameters.name).style.left = 
-                        toXYCoords(planets[i].mesh.position).x + "px";
+        for(var i = 0; i < planets.length; i++)
+        {
+            var projection = toXYCoords(planets[i].mesh.position);
+
+            if(projection != null)
+            {
+                document.getElementById(planets[i].parameters.name).style.top = 
+                            projection.y + "px";
+
+                document.getElementById(planets[i].parameters.name).style.left = 
+                            projection.x + "px";
+            }
         }
     };
 
@@ -500,6 +507,19 @@ $(document).ready(function(){
 
     function toXYCoords (pos) {
         camera.updateMatrixWorld();
+
+        //get camera direction vector
+        var dir = new THREE.Vector3( 0, 0, -1 );
+        dir.applyMatrix4( camera.matrixWorld );
+
+        var dotProduct = dir.dot(pos.clone().sub(camera.position));
+
+        if(dotProduct < 0)
+        {
+            // behind camera, don't show 
+            return null;
+        }
+
         var vector = projector.projectVector(pos.clone(), camera);
         vector.x = (vector.x + 1)/2 * window.innerWidth;
         vector.y = -(vector.y - 1)/2 * window.innerHeight;
