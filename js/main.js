@@ -8,6 +8,27 @@ $(document).ready(function(){
     }
 
 
+    var scaleDistances = 20;
+    var scaleSizes = 0.2;
+    var paused = false;
+    var previousTime = new Date().getTime();
+    var simulationTime = 0;
+    var simulationSpeed = 0.05;
+    var lastParticleSpawn = new Date().getTime();
+
+    
+    var sunPos = new THREE.Vector3(0, 0, 0);
+
+    var planets = [];
+
+    var planetParams = new Array();
+
+    var stats;
+
+    var renderer, raycaster, projector;
+
+    var mouse = new THREE.Vector2(), INTERSECTED;
+
     /*
     a = semimajor axis, AU
     e = eccentricity
@@ -115,27 +136,6 @@ $(document).ready(function(){
         w: 113.7623866, 
         T: 2447799.934
     }
-    var scaleDistances = 20;
-    var scaleSizes = 0.2;
-    var paused = false;
-    var previousTime = new Date().getTime();
-    var simulationTime = 0;
-    var simulationSpeed = 0.05;
-    var lastParticleSpawn = new Date().getTime();
-
-    
-    var sunPos = new THREE.Vector3(0, 0, 0);
-
-    var planets = [];
-
-    var planetParams = new Array();
-
-    var stats;
-
-    var renderer, raycaster, projector;
-
-    var mouse = new THREE.Vector2(), INTERSECTED;
-
 
     function init(){
 
