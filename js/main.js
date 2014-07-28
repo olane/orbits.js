@@ -514,7 +514,7 @@ $(document).ready(function(){
 
         var dotProduct = dir.dot(pos.clone().sub(camera.position));
 
-        if(dotProduct < 0)
+        if(dotProduct > 0)
         {
             // behind camera, don't show 
             return null;
