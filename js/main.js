@@ -8,6 +8,113 @@ $(document).ready(function(){
     }
 
 
+    /*
+    a = semimajor axis, AU
+    e = eccentricity
+    i = inclination, radians
+    L = longitude of ascending node, degrees
+    w = argument of perihelion, degrees
+    T = time of perihelion passage, Julian date
+    */
+    planetParams[0] = {
+        name: "Mercury",
+        radius: 2.4,
+        colour: 0xFFA500,
+        a: 0.38709930, 
+        e: 0.2056376, 
+        i: 0.122250601, 
+        L: 48.3194793, 
+        w: 29.1527676, 
+        T: 2454755.654
+    }
+    planetParams[1] = {
+        name: "Venus",
+        radius: 6,
+        colour: 0xFCD59C,
+        a: 0.72333601, 
+        e: 0.0067730, 
+        i: 0.0592470341, 
+        L: 76.6548368, 
+        w: 54.9478720, 
+        T: 2454657.866
+    }
+    planetParams[2] = {
+        name: "Earth",
+        radius: 6.3,
+        colour: 0x336699,
+        a: 1.00000312, 
+        e: 0.0167072, 
+        i: -0.0000206140838, 
+        L: 0.0000000, 
+        w: 102.9667920, 
+        T: 2454836.12
+    }
+    planetParams[3] = {
+        name: "Mars",
+        radius: 3.3,
+        colour: 0xFFA500,
+        a: 1.52371200, 
+        e: 0.0934012, 
+        i: 0.0322704258, 
+        L: 49.5331933, 
+        w: 286.5631954, 
+        T: 2454254.482
+    }
+    planetParams[4] = {
+        name: "Jupiter",
+        radius: 10,
+        colour: 0xFFB500,
+        a: 5.20287655, 
+        e: 0.0483743, 
+        i: 0.0227631339, 
+        L: 100.4923411, 
+        w: 274.2552763, 
+        T: 2451305.445
+    }
+    planetParams[5] = {
+        name: "Saturn",
+        radius: 9,
+        colour: 0xFFC533,
+        a: 9.53656333, 
+        e: 0.0538159, 
+        i: 0.0433917859, 
+        L: 113.6364296, 
+        w: 338.9247211, 
+        T: 2452816.300
+    }
+    planetParams[6] = {
+        name: "Uranus",
+        radius: 7,
+        colour: 0x5588BB,
+        a: 19.1889880, 
+        e: 0.0472535, 
+        i: 0.0134812565, 
+        L: 74.0207436, 
+        w: 96.9702770, 
+        T: 2439410.280
+    }
+    planetParams[7] = {
+        name: "Neptune",
+        radius: 7,
+        colour: 0x6699CC,
+        a: 30.0699464, 
+        e: 0.0085951, 
+        i: 0.030893642, 
+        L: 131.7837677, 
+        w: 273.1519618, 
+        T: 2408052.845
+    }
+    planetParams[8] = {
+        name: "Pluto",
+        radius: 1.2,
+        colour: 0x114477,
+        a: 39.4820883, 
+        e: 0.2488320, 
+        i: 0.29914972, 
+        L: 110.3028711, 
+        w: 113.7623866, 
+        T: 2447799.934
+    }
     var scaleDistances = 20;
     var scaleSizes = 0.2;
     var paused = false;
@@ -443,113 +550,6 @@ $(document).ready(function(){
     run();
 
 
-    /*
-    a = semimajor axis, AU
-    e = eccentricity
-    i = inclination, radians
-    L = longitude of ascending node, degrees
-    w = argument of perihelion, degrees
-    T = time of perihelion passage, Julian date
-    */
-    planetParams[0] = {
-        name: "Mercury",
-        radius: 2.4,
-        colour: 0xFFA500,
-        a: 0.38709930, 
-        e: 0.2056376, 
-        i: 0.122250601, 
-        L: 48.3194793, 
-        w: 29.1527676, 
-        T: 2454755.654
-    }
-    planetParams[1] = {
-        name: "Venus",
-        radius: 6,
-        colour: 0xFCD59C,
-        a: 0.72333601, 
-        e: 0.0067730, 
-        i: 0.0592470341, 
-        L: 76.6548368, 
-        w: 54.9478720, 
-        T: 2454657.866
-    }
-    planetParams[2] = {
-        name: "Earth",
-        radius: 6.3,
-        colour: 0x336699,
-        a: 1.00000312, 
-        e: 0.0167072, 
-        i: -0.0000206140838, 
-        L: 0.0000000, 
-        w: 102.9667920, 
-        T: 2454836.12
-    }
-    planetParams[3] = {
-        name: "Mars",
-        radius: 3.3,
-        colour: 0xFFA500,
-        a: 1.52371200, 
-        e: 0.0934012, 
-        i: 0.0322704258, 
-        L: 49.5331933, 
-        w: 286.5631954, 
-        T: 2454254.482
-    }
-    planetParams[4] = {
-        name: "Jupiter",
-        radius: 10,
-        colour: 0xFFB500,
-        a: 5.20287655, 
-        e: 0.0483743, 
-        i: 0.0227631339, 
-        L: 100.4923411, 
-        w: 274.2552763, 
-        T: 2451305.445
-    }
-    planetParams[5] = {
-        name: "Saturn",
-        radius: 9,
-        colour: 0xFFC533,
-        a: 9.53656333, 
-        e: 0.0538159, 
-        i: 0.0433917859, 
-        L: 113.6364296, 
-        w: 338.9247211, 
-        T: 2452816.300
-    }
-    planetParams[6] = {
-        name: "Uranus",
-        radius: 7,
-        colour: 0x5588BB,
-        a: 19.1889880, 
-        e: 0.0472535, 
-        i: 0.0134812565, 
-        L: 74.0207436, 
-        w: 96.9702770, 
-        T: 2439410.280
-    }
-    planetParams[7] = {
-        name: "Neptune",
-        radius: 7,
-        colour: 0x6699CC,
-        a: 30.0699464, 
-        e: 0.0085951, 
-        i: 0.030893642, 
-        L: 131.7837677, 
-        w: 273.1519618, 
-        T: 2408052.845
-    }
-    planetParams[8] = {
-        name: "Pluto",
-        radius: 1.2,
-        colour: 0x114477,
-        a: 39.4820883, 
-        e: 0.2488320, 
-        i: 0.29914972, 
-        L: 110.3028711, 
-        w: 113.7623866, 
-        T: 2447799.934
-    }
 
 
 });
