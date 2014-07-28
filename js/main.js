@@ -149,7 +149,6 @@ $(document).ready(function(){
         camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 10000);
         scene.add(camera);
 
-
         renderer = new THREE.WebGLRenderer({
             antialias: true
         });
@@ -291,6 +290,7 @@ $(document).ready(function(){
     var cameraMinDist = 5;
 
     function updateCamera(x){
+
         // TILT
         cameraTilt += cameraTiltSpeed;
         cameraTiltSpeed *= (1-cameraTiltFriction);
@@ -346,35 +346,6 @@ $(document).ready(function(){
     }
 
     function render(){
-/*
-        var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
-        projector.unprojectVector( vector, camera );
-
-        raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
-
-        var intersects = raycaster.intersectObjects( scene.children );
-
-        if ( intersects.length > 0 ) {
-
-            if ( INTERSECTED != intersects[ 0 ].object ) {
-
-                if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-                INTERSECTED = intersects[ 0 ].object;
-                INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-                INTERSECTED.material.emissive.setHex( 0xff0000 );
-
-            }
-
-        } else {
-
-            if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-            INTERSECTED = null;
-
-        }*/
-
-
         renderer.render(scene, camera);
     };
 
@@ -385,7 +356,13 @@ $(document).ready(function(){
 
         this.mesh = addSphere(this.parameters.radius * scaleSizes, this.parameters.colour);
 
+        this.textLabel = document.createElement('div');
+        this.textLabel.style.position = 'absolute';
+        this.textLabel.style.color = 'white';
+        this.textLabel.id = this.parameters.name;
+        this.textLabel.innerHTML = this.parameters.name;
 
+        document.getElementsByTagName("body")[0].appendChild(this.textLabel);
 
         this.updatePlanet = function(){
             /*
@@ -466,6 +443,12 @@ $(document).ready(function(){
             this.mesh.position.y = y0;
             this.mesh.position.z = z0;
 
+            document.getElementById(this.parameters.name).style.top = 
+                        toXYCoords(this.mesh.position).y + "px";
+
+            document.getElementById(this.parameters.name).style.left = 
+                        toXYCoords(this.mesh.position).x + "px";
+
         }
 
 
@@ -502,8 +485,13 @@ $(document).ready(function(){
         return light;
     };
 
-
-
+    function toXYCoords (pos) {
+        camera.updateMatrixWorld();
+        var vector = projector.projectVector(pos.clone(), camera);
+        vector.x = (vector.x + 1)/2 * window.innerWidth;
+        vector.y = -(vector.y - 1)/2 * window.innerHeight;
+        return vector;
+    }
 
     var bindInputs = function(){
         key('up', function(){

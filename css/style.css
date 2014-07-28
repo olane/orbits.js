@@ -3,6 +3,7 @@ body {
 	padding: 0;
 	font-family: sans-serif;
 	background: rgb(0, 0, 0);
+	overflow: hidden;
 }
 
 #hints-overlay {
