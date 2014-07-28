@@ -276,7 +276,7 @@ $(document).ready(function(){
     }
 
 
-    var fov = 60;
+    var fov = 70;
     var cameraTilt = Math.PI/3;
     var cameraDistance = 120;
 
