@@ -336,13 +336,13 @@ $(document).ready(function(){
             {
                 var element = document.getElementById(planets[i].parameters.name);
 
-                element.style.visible = "visible";
+                element.style.visiblility = "visible";
                 element.style.top = projection.y + "px";
                 element.style.left = projection.x + "px";
             }
             else
             {
-                element.style.visible = "hidden";
+                element.style.visiblility = "hidden";
             }
         }
     };
