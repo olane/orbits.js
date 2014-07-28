@@ -138,15 +138,14 @@ $(document).ready(function(){
     }
 
 
-
     function init(){
 
         scene = new THREE.Scene();
         projector = new THREE.Projector();
         raycaster = new THREE.Raycaster();
 
-        // new THREE.PerspectiveCamera( FOV, viewAspectRatio, zNear, zFar );
         camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 10000);
+        camera.rotation.order = 'XYZ';
         scene.add(camera);
 
         renderer = new THREE.WebGLRenderer({
@@ -279,6 +278,8 @@ $(document).ready(function(){
     var fov = 70;
     var cameraTilt = Math.PI/3;
     var cameraDistance = 120;
+    var cameraRotation = 0;
+
 
     var cameraTiltAccel = 0.01;
     var cameraTiltSpeed = 0;
@@ -288,6 +289,10 @@ $(document).ready(function(){
     var cameraDistSpeed = 0;
     var cameraDistFriction = 0.05;
     var cameraMinDist = 5;
+
+    var cameraRotationSpeed = 0;
+    var cameraRotationFriction = 0.05;
+    var cameraRotationAccel = 0.01;
 
     function updateCamera(x){
 
@@ -304,15 +309,30 @@ $(document).ready(function(){
             cameraTiltSpeed = 0;
         }
 
+        //ROTATION
+        cameraRotation += cameraRotationSpeed;
+        cameraRotationSpeed *= (1-cameraRotationFriction);
+
         //DISTANCE
         cameraDistance += cameraDistSpeed;
         cameraDistSpeed *= (1-cameraDistFriction);
 
         if(cameraDistance < cameraMinDist ) {cameraDistance = cameraMinDist; cameraDistSpeed = 0;};
 
-        camera.position.y = Math.sin(cameraTilt) * cameraDistance * -1;
-        camera.position.z = Math.cos(cameraTilt) * cameraDistance * -1;
+        camera.position.z = Math.cos(-cameraTilt) * cameraDistance;
+        camera.position.y = Math.sin(-cameraTilt) * Math.sin(cameraRotation) * cameraDistance ;
+        camera.position.x = Math.sin(-cameraTilt) * Math.cos(cameraRotation) * cameraDistance ;
+
+        camera.up.set( 0, 0, 1 );
         camera.lookAt(sunPos);
+
+        for(var i = 0; i < planets.length; i++){
+            document.getElementById(planets[i].parameters.name).style.top = 
+                        toXYCoords(planets[i].mesh.position).y + "px";
+
+            document.getElementById(planets[i].parameters.name).style.left = 
+                        toXYCoords(planets[i].mesh.position).x + "px";
+        }
     };
 
     function run(time){
@@ -338,9 +358,7 @@ $(document).ready(function(){
             updatePlanets();
         }
 
-
         updateCamera();
-
 
         stats.update();
     }
@@ -443,12 +461,6 @@ $(document).ready(function(){
             this.mesh.position.y = y0;
             this.mesh.position.z = z0;
 
-            document.getElementById(this.parameters.name).style.top = 
-                        toXYCoords(this.mesh.position).y + "px";
-
-            document.getElementById(this.parameters.name).style.left = 
-                        toXYCoords(this.mesh.position).x + "px";
-
         }
 
 
@@ -500,6 +512,14 @@ $(document).ready(function(){
 
         key('down', function(){
             cameraTiltSpeed += cameraTiltAccel;
+        });
+
+        key('left', function(){
+            cameraRotationSpeed -= cameraRotationAccel;
+        });
+
+        key('right', function(){
+            cameraRotationSpeed += cameraRotationAccel;
         });
 
         key('a', function(){
