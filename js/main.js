@@ -331,10 +331,10 @@ $(document).ready(function(){
         for(var i = 0; i < planets.length; i++)
         {
             var projection = toXYCoords(planets[i].mesh.position);
+            var element = document.getElementById(planets[i].parameters.name);
 
             if(projection != null)
             {
-                var element = document.getElementById(planets[i].parameters.name);
 
                 element.style.visibility = "visible";
                 element.style.top = projection.y + "px";
