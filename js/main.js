@@ -548,7 +548,8 @@ $(document).ready(function(){
 
         key('p', function(){
             paused = !paused;
-
+        }
+        
         key(',', function(){
             simulationSpeed *= 0.9;
         });
