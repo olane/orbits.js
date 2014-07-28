@@ -27,7 +27,8 @@ $(document).ready(function(){
 
     var renderer, raycaster, projector;
 
-    var mouse = new THREE.Vector2(), INTERSECTED;
+    var labels = true;
+
 
     /*
     a = semimajor axis, AU
@@ -171,20 +172,10 @@ $(document).ready(function(){
         stats.domElement.style.zIndex = 100;
         DOM.wrap.append( stats.domElement );
 
-        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
         window.addEventListener( 'resize', onWindowResize, false );
 
         populateParticles();
         
-    }
-
-    function onDocumentMouseMove( event ) {
-
-        event.preventDefault();
-
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
     }
 
     function onWindowResize() {
@@ -333,7 +324,7 @@ $(document).ready(function(){
             var projection = toXYCoords(planets[i].mesh.position);
             var element = document.getElementById(planets[i].parameters.name);
 
-            if(projection != null)
+            if(projection != null && labels)
             {
 
                 element.style.visibility = "visible";
@@ -557,10 +548,13 @@ $(document).ready(function(){
 
         key('p', function(){
             paused = !paused;
-        });
 
         key(',', function(){
             simulationSpeed *= 0.9;
+        });
+
+        key('l', function(){
+            labels = !labels;
         });
 
         key('.', function(){
