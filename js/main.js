@@ -280,6 +280,8 @@ $(document).ready(function(){
     var cameraDistance = 120;
     var cameraRotation = 0;
 
+    var cameraTiltMax = Math.PI - 0.01;
+    var cameraTiltMin = 0.01;
 
     var cameraTiltAccel = 0.01;
     var cameraTiltSpeed = 0;
@@ -300,12 +302,12 @@ $(document).ready(function(){
         cameraTilt += cameraTiltSpeed;
         cameraTiltSpeed *= (1-cameraTiltFriction);
 
-        if(cameraTilt < 0 ) {
-            cameraTilt = 0; 
+        if(cameraTilt < cameraTiltMin) {
+            cameraTilt = cameraTiltMin; 
             cameraTiltSpeed = 0;
         }
-        else if(cameraTilt > Math.PI / 2 - 0.01) {
-            cameraTilt = Math.PI / 2 - 0.01; 
+        else if(cameraTilt > cameraTiltMax) {
+            cameraTilt = cameraTiltMax; 
             cameraTiltSpeed = 0;
         }
 
