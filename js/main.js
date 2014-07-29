@@ -522,27 +522,27 @@ $(document).ready(function(){
     }
 
     var bindInputs = function(){
-        key('up', function(){
+        key('w', function(){
             cameraTiltSpeed -= cameraTiltAccel;
         });
 
-        key('down', function(){
+        key('s', function(){
             cameraTiltSpeed += cameraTiltAccel;
         });
 
-        key('left', function(){
+        key('a', function(){
             cameraRotationSpeed -= cameraRotationAccel;
         });
 
-        key('right', function(){
+        key('d', function(){
             cameraRotationSpeed += cameraRotationAccel;
         });
 
-        key('a', function(){
+        key('q', function(){
             cameraDistSpeed -= cameraDistAccel;
         });
 
-        key('z', function(){
+        key('e', function(){
             cameraDistSpeed += cameraDistAccel;
         });
 
