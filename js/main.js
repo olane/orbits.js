@@ -571,6 +571,10 @@ $(document).ready(function(){
         key('.', function(){
             simulationSpeed *= 1/0.9;
         });
+
+        key('r', function(){
+            simulationSpeed *= -1;
+        });
     };
     bindInputs();
 
