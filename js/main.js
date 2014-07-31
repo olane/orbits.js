@@ -369,7 +369,7 @@ $(document).ready(function(){
 
         stats.update();
 
-        $('#clock').text(getDate(simulationTime).format("ddd, MMM Do YYYY"));
+        $('#clock').text(getDate(simulationTime).format("ddd, MMM DD YYYY"));
     }
 
     function render(){
