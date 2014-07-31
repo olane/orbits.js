@@ -549,11 +549,11 @@ $(document).ready(function(){
         });
 
         key('q', function(){
-            cameraDistSpeed -= cameraDistAccel;
+            cameraDistSpeed += cameraDistAccel;
         });
 
         key('e', function(){
-            cameraDistSpeed += cameraDistAccel;
+            cameraDistSpeed -= cameraDistAccel;
         });
 
         key('p', function(){
