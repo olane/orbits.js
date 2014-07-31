@@ -12,8 +12,12 @@ $(document).ready(function(){
     var scaleSizes = 0.2;
     var paused = false;
     var previousTime = new Date().getTime();
-    var simulationTime = 0;
-    var simulationSpeed = 0.05;
+
+    //days since Julian epoch, initialised to current time
+    var simulationTime = new Date().getTime()/86400000 + 2440587.5; 
+    //simulation days per millisecond
+    var simulationSpeed = 0.05; 
+
     var lastParticleSpawn = new Date().getTime();
 
     
@@ -364,6 +368,8 @@ $(document).ready(function(){
         updateCamera();
 
         stats.update();
+
+        $('#clock').text(getDate(simulationTime).format("ddd, MMM Do YYYY"));
     }
 
     function render(){
@@ -519,6 +525,10 @@ $(document).ready(function(){
         vector.x = (vector.x + 1)/2 * window.innerWidth;
         vector.y = -(vector.y - 1)/2 * window.innerHeight;
         return vector;
+    }
+
+    function getDate(julianDate){
+        return moment((julianDate - 2440587.5) * 86400000);
     }
 
     var bindInputs = function(){
