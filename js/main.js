@@ -15,11 +15,11 @@ $(document).ready(function(){
 
     //days since Julian epoch, initialised to current time
     var simulationTime = new Date().getTime()/86400000 + 2440587.5; 
+    
     //simulation days per millisecond
     var simulationSpeed = 0.05; 
 
     var lastParticleSpawn = new Date().getTime();
-
     
     var sunPos = new THREE.Vector3(0, 0, 0);
 
@@ -169,7 +169,6 @@ $(document).ready(function(){
         populateSun();
         updateCamera();
 
-
         stats = new Stats();
         stats.domElement.style.position = 'absolute';
         stats.domElement.style.top = '0px';
@@ -183,14 +182,14 @@ $(document).ready(function(){
     }
 
     function onWindowResize() {
-
+        
         var border = 5;
 
         camera.aspect = (window.innerWidth - border) / (window.innerHeight - border);
         camera.updateProjectionMatrix();
 
         renderer.setSize(window.innerWidth - border, window.innerHeight - border);
-
+        
     }
 
     var particleSystem;
@@ -206,7 +205,6 @@ $(document).ready(function(){
             color: 0xBBBBBB,
             size: 0.1
         });
-
 
         // now create the individual particles
         for (var p = 0; p < particleCount; p++) {
@@ -225,8 +223,8 @@ $(document).ready(function(){
 
         // add it to the scene
         scene.add(particleSystem);
+        
     }
-
 
     function populatePlanets(){
         
@@ -237,7 +235,9 @@ $(document).ready(function(){
     }
 
     function populateSun(){
+        
         var radius = 2;
+        
         geometry = new THREE.SphereGeometry(radius, 100, 100);
         material = new THREE.MeshBasicMaterial({color: 0xFFFF00});
 
@@ -249,23 +249,29 @@ $(document).ready(function(){
         scene.add(sunLight);
         var light = new THREE.AmbientLight( 0x101010 );
         scene.add(light);
+        
     }
 
 
     function updatePlanets(){
+        
         for(var i = 0; i < planets.length; i++){
             planets[i].updatePlanet();
         }
+        
     }
 
     function updateParticles(){
+        
         for(var i = 0; i < planets.length; i++){
             //reposition a particle
             particleSystem.geometry.vertices[nextVictimParticle] = planets[i].mesh.position.clone();
             nextVictimParticle = (nextVictimParticle + 1) % (particleCount);
         }
+        
         particleSystem.geometry.dynamic = true;
         particleSystem.geometry.verticesNeedUpdate = true;
+        
     }
 
 
@@ -322,7 +328,6 @@ $(document).ready(function(){
         camera.up.set( 0, 0, 1 );
         camera.lookAt(sunPos);
 
-
         for(var i = 0; i < planets.length; i++)
         {
             var projection = toXYCoords(planets[i].mesh.position);
@@ -340,6 +345,7 @@ $(document).ready(function(){
                 element.style.visibility = "hidden";
             }
         }
+        
     };
 
     function run(time){
@@ -347,7 +353,6 @@ $(document).ready(function(){
         var currentTime = new Date().getTime();
         var elapsedTime = currentTime - previousTime;
         previousTime = currentTime;
-
 
         requestAnimationFrame(run);
 
@@ -375,7 +380,6 @@ $(document).ready(function(){
     function render(){
         renderer.render(scene, camera);
     };
-
 
     var Planet = function(parameterObj){
 
@@ -414,11 +418,9 @@ $(document).ready(function(){
             var m = 2 * Math.PI * (simulationTime - T) / P;
 
             //Adjust m to the interval [0, 2 pi).
-            
             m = m % (2 * Math.PI);
 
             //Find the eccentric anomaly, u. (Danby's method is used here.)
-
             var U1 = m;
             
             var U0, F0, F1, F2, F3, D1, D2, D3;
@@ -439,25 +441,21 @@ $(document).ready(function(){
             var u = U1;
             
             //Find the canonical (triple prime) heliocentric position vector.
-            
             var x3 = a * (Math.cos(u) - e);
             var y3 = a * Math.sin(u) * Math.sqrt(1 - Math.pow(e, 2));
             var z3 = 0;
             
             //Rotate the triple-prime position vector by the argument of the perihelion, w.
-            
             var x2 = x3 * Math.cos(w) - y3 * Math.sin(w);
             var y2 = x3 * Math.sin(w) + y3 * Math.cos(w);
             var z2 = z3;
             
             //Rotate the double-prime position vector by the inclination, i.
-            
             var x1 = x2;
             var y1 = y2 * Math.cos(i);
             var z1 = y2 * Math.sin(i);
             
             //Rotate the single-prime position vector by the longitude of the ascending node, L.
-            
             var x0 = x1 * Math.cos(L) - y1 * Math.sin(L);
             var y0 = x1 * Math.sin(L) + y1 * Math.cos(L);
             var z0 = z1;
@@ -471,26 +469,26 @@ $(document).ready(function(){
             this.mesh.position.z = z0;
 
         }
-
-
     };
 
 
     function addSphere(radius, colour){
+        
         geometry = new THREE.SphereGeometry(radius, 50, 50);
-        //material = new THREE.MeshBasicMaterial({color: colour});
         material = new THREE.MeshLambertMaterial( { color: colour, shininess: 40 }  ) 
-
         mesh = new THREE.Mesh(geometry, material);
         
         scene.add(mesh);
 
         return mesh;
+        
     };
 
     function addLight(x, y, z, type){
+        
         type = type || 'directional';
         var light;
+        
         switch(type){
             case 'directional':
                 light = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -503,16 +501,18 @@ $(document).ready(function(){
         }
         
         scene.add(light);
+        
         return light;
+        
     };
 
     function toXYCoords (pos) {
+        
         camera.updateMatrixWorld();
 
         //get camera direction vector
         var dir = new THREE.Vector3( 0, 0, -1 );
         dir.applyMatrix4( camera.matrixWorld );
-
         var dotProduct = dir.dot(pos.clone().sub(camera.position));
 
         if(dotProduct > 0)
@@ -524,6 +524,7 @@ $(document).ready(function(){
         var vector = projector.projectVector(pos.clone(), camera);
         vector.x = (vector.x + 1)/2 * window.innerWidth;
         vector.y = -(vector.y - 1)/2 * window.innerHeight;
+        
         return vector;
     }
 
@@ -576,13 +577,11 @@ $(document).ready(function(){
             simulationSpeed *= -1;
         });
     };
+    
     bindInputs();
 
-
     init();
+    
     run();
-
-
-
 
 });
